@@ -95,14 +95,26 @@ def create_restaurant_pizza():
         )
         db.session.add(new_rp)
         db.session.commit()
+
         response = {
             "id": new_rp.id,
             "price": new_rp.price,
             "pizza_id": new_rp.pizza_id,
-            "restaurant_id": new_rp.restaurant_id
+            "restaurant_id": new_rp.restaurant_id,
+            "pizza": {
+                "id": new_rp.pizza.id,
+                "name": new_rp.pizza.name,
+                "ingredients": new_rp.pizza.ingredients
+            },
+            "restaurant": {
+                "id": new_rp.restaurant.id,
+                "name": new_rp.restaurant.name,
+                "address": new_rp.restaurant.address
+            }
         }
         return make_response(jsonify(response), 201)
-    except Exception as e:
-        return make_response({"error": str(e)}, 400)
+    except ValueError:
+        return make_response(jsonify({"errors": ["validation errors"]}), 400)
+
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
